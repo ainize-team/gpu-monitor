@@ -54,8 +54,8 @@ def get_gpus() -> Dict[int, Dict]:
             ret[int(index)] = {
                 'utilization': string_to_int(utilization),
                 'memory_utilization': string_to_int(memory_utilization),
-                'total_memory': total_memory,
-                'used_memory': used_memory,
+                'total_memory': string_to_int(total_memory),
+                'used_memory': string_to_int(used_memory),
                 'temperature': string_to_int(temperature)
             }
         return ret
