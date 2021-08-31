@@ -44,8 +44,7 @@ def get_gpus() -> Dict[int, Dict]:
             "--format=csv,noheader,nounits"], stdout=PIPE)
         stdout, stderr = p.communicate()
     except Exception as e:
-        # TODO(YoungJae Kim) : Exception Handling
-        return ret
+        return {-1: f'{e}'}
     try:
         lines = stdout.decode('utf-8').split(os.linesep)
         number_of_gpus = len(lines) - 1
@@ -60,5 +59,4 @@ def get_gpus() -> Dict[int, Dict]:
             }
         return ret
     except UnicodeDecodeError as e:
-        # TODO(YoungJae Kim) : Exception Handling
-        return ret
+        return {-1: f'{e}'}
