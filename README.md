@@ -13,6 +13,6 @@ This project is for monitoring the status of the gpu server being used.
 ## TODO
 
 * [x] Function to get gpu information
-* [ ] Function to send the current server status to the slack bot
+* [x] Function to send the current server status to the slack bot
 * [ ] Function that writes the current server state to a google spreadsheet.
 * [ ] Easy to use using Dockerfile
