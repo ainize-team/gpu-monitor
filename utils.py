@@ -12,13 +12,37 @@ def string_to_int(string_number: str) -> int:
 
 
 def get_gpus() -> Dict[int, Dict]:
+    """
+    Function to get gpu information using nvidia-smi. To use this function, `nvidia-smi` must be installed in advance.
+    Using this function, you can get the GPU utilization, memory utilization, total memory, used memory and temperature information.
+    For detailed explanation, see the site below
+    https://nvidia.custhelp.com/app/answers/detail/a_id/3751/~/useful-nvidia-smi-queries
+    This function returns information in the form below.
+    {
+        0: {
+            'utilization': 65,
+            'memory_utilization': 47,
+            'total_memory': 40537,
+            'used_memory': 19543
+            'temperature': 48,
+        },
+        1: {
+            'utilization': 52,
+            'memory_utilization': 36,
+            'total_memory': 40537,
+            'used_memory': 17080
+            'temperature': 46,
+        },
+        ...
+    }
+    """
     ret: Dict[int, Dict] = {}
     try:
         p = Popen([
             "nvidia-smi",
             "--query-gpu=index,utilization.gpu,utilization.memory,memory.total,memory.used,temperature.gpu",
             "--format=csv,noheader,nounits"], stdout=PIPE)
-        stdout, stderror = p.communicate()
+        stdout, stderr = p.communicate()
     except Exception as e:
         # TODO(YoungJae Kim) : Exception Handling
         return ret
