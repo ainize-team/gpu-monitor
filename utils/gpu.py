@@ -46,7 +46,7 @@ def get_gpus() -> List[GPUInformation]:
     Returns:
         List[GPUInformation]: List of Information of each GPU
     """
-    p = Popen(
+    proc = Popen(
         [
             "nvidia-smi",
             "--query-gpu=index,gpu_name,gpu_bus_id,temperature.gpu,utilization.gpu,temperature.memory,utilization.memory,memory.total,memory.free,memory.used",
@@ -54,7 +54,7 @@ def get_gpus() -> List[GPUInformation]:
         ],
         stdout=PIPE,
     )
-    stdout, _ = p.communicate()
+    stdout, _ = proc.communicate()
     lines = stdout.decode("utf-8").split(os.linesep)
     ret = []
     for line in lines[:-1]:
