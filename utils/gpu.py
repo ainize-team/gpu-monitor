@@ -5,7 +5,7 @@ from subprocess import Popen, PIPE
 
 
 @dataclass
-# pylint: disable=line-too-long
+# pylint: disable=line-too-long, too-many-instance-attributes
 class GPUInformation:
     """
     Information About GPU
@@ -46,42 +46,32 @@ def get_gpus() -> List[GPUInformation]:
     Returns:
         List[GPUInformation]: List of Information of each GPU
     """
-    proc = Popen(
+
+    with Popen(
         [
             "nvidia-smi",
             "--query-gpu=index,gpu_name,gpu_bus_id,temperature.gpu,utilization.gpu,temperature.memory,utilization.memory,memory.total,memory.free,memory.used",
             "--format=csv,noheader,nounits",
         ],
         stdout=PIPE,
-    )
-    stdout, _ = proc.communicate()
-    lines = stdout.decode("utf-8").split(os.linesep)
-    ret = []
-    for line in lines[:-1]:
-        [
-            index,
-            gpu_name,
-            gpu_bus_id,
-            gpu_temperature,
-            gpu_utilization,
-            memory_temperature,
-            memory_utilization,
-            total_memory,
-            free_memory,
-            used_memory,
-        ] = [each.strip() for each in line.split(",")]
-        ret.append(
-            GPUInformation(
-                index=index,
-                gpu_name=gpu_name,
-                gpu_bus_id=gpu_bus_id,
-                gpu_temperature=gpu_temperature,
-                gpu_utilization=gpu_utilization,
-                memory_temperature=memory_temperature,
-                memory_utilization=memory_utilization,
-                total_memory=total_memory,
-                free_memory=free_memory,
-                used_memory=used_memory,
+    ) as proc:
+        stdout, _ = proc.communicate()
+        lines = stdout.decode("utf-8").split(os.linesep)
+        ret = []
+        for line in lines[:-1]:
+            gpu_information_list = [each.strip() for each in line.split(",")]
+            ret.append(
+                GPUInformation(
+                    index=gpu_information_list[0],
+                    gpu_name=gpu_information_list[1],
+                    gpu_bus_id=gpu_information_list[2],
+                    gpu_temperature=gpu_information_list[3],
+                    gpu_utilization=gpu_information_list[4],
+                    memory_temperature=gpu_information_list[5],
+                    memory_utilization=gpu_information_list[6],
+                    total_memory=gpu_information_list[7],
+                    free_memory=gpu_information_list[8],
+                    used_memory=gpu_information_list[9],
+                )
             )
-        )
-    return ret
+        return ret
