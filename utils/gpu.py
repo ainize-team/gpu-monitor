@@ -41,7 +41,7 @@ def get_gpus() -> List[GPUInformation]:
     """
     Function to get gpu information using nvidia-smi. To use this function, `nvidia-smi` must be installed in advance.
     Using this function, you can get the information of GPUs.
-    For detailed explanation, see the site below
+    For detailed explanation, see the site below or `nvidia-smi --help-query-gpu`
     https://nvidia.custhelp.com/app/answers/detail/a_id/3751/~/useful-nvidia-smi-queries
     Returns:
         List[GPUInformation]: List of Information of each GPU
