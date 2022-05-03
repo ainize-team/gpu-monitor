@@ -45,6 +45,22 @@ def get_gpus() -> List[GPUInformation]:
     https://nvidia.custhelp.com/app/answers/detail/a_id/3751/~/useful-nvidia-smi-queries
     Returns:
         List[GPUInformation]: List of Information of each GPU
+    Example:
+        get_gpus()
+        [
+            GPUInformation(
+                index='0',
+                gpu_name='NVIDIA TITAN V',
+                gpu_bus_id='00000000:06:00.0',
+                gpu_temperature='45',
+                gpu_utilization='6',
+                memory_temperature='41',
+                memory_utilization='1',
+                total_memory='12288',
+                free_memory='11215',
+                used_memory='848'
+            )
+        ]
     """
 
     with Popen(
