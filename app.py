@@ -70,10 +70,10 @@ def _gpu_check_job(utilization_threshold: int, server_name: str, slack_bot) -> N
     gpu_information_list = get_gpus()
     average_gpu_utilization = get_average_gpu_utilization(gpu_information_list)
     if average_gpu_utilization <= utilization_threshold:
-        slack_bot.send_message("success", server_name, average_gpu_utilization)
+        slack_bot.send_message("error", server_name, average_gpu_utilization)
 
     else:
-        slack_bot.send_message("error", server_name, average_gpu_utilization)
+        slack_bot.send_message("success", server_name, average_gpu_utilization)
 
 
 def main(args: argparse.Namespace) -> None:

@@ -1,3 +1,4 @@
+from typing import List
 import requests
 
 from loguru import logger
@@ -5,7 +6,7 @@ from loguru import logger
 from constants import SlackMesaageColorEnum
 
 
-def _make_message(status: str, server_name: str, utilization: float) -> dict:
+def _make_message(status: str, server_name: str, utilization: float) -> List:
     """
     Send slack message according to the state of the gpu utilization
 
@@ -15,25 +16,33 @@ def _make_message(status: str, server_name: str, utilization: float) -> dict:
         utilization (float): gpu utilization
 
     Returns:
-        dict: value for sending slack message
+        list: value for sending slack message
     """
     if status == "success":
-        text = ":thumbsup: GPU utilization is normal. :thumbsup:"
-        fields = []
+        fields = [
+            {
+                "title": "GPU utilization is normal",
+                "value": f"GPU Server: {server_name}\nGPU Utilization: {utilization}",
+                "short": False,
+            },
+        ]
         color = SlackMesaageColorEnum.SUCCESS_MESSAGE_COLOR.value
     if status == "error":
-        text = "*:exclamation: GPU utilization is abnormal. :exclamation:*"
         fields = [
-            {"value": f"GPU Utilization: {utilization}", "short": False},
+            {
+                "title": "GPU utilization is abnormal",
+                "value": f"GPU Server: {server_name}\nGPU Utilization: {utilization}",
+                "short": False,
+            },
         ]
         color = SlackMesaageColorEnum.ERROR_MESSAGE_COLOR.value
 
-    return {
-        "color": color,
-        "author_name": server_name,
-        "text": text,
-        "fields": fields,
-    }
+    return [
+        {
+            "color": color,
+            "fields": fields,
+        }
+    ]
 
 
 class SlackWebhookBot:
@@ -64,7 +73,7 @@ class SlackWebhookBot:
             )
             if response.status_code == 200:
                 return {"is_error": False, "text": response.text}
-            logger.error("Error occured while sending slack message : ", response)
+            logger.error("Error occured while sending slack message : ", response.text)
             return {"is_error": True, "text": response.text}
         except Exception as error:
             logger.error("Unexpected error occurred while sending slack message : ", error)
