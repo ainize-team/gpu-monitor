@@ -1,4 +1,9 @@
+import sys
 import argparse
+
+from loguru import logger
+
+from constants import ExitStatusEnum
 
 
 def get_args() -> argparse.Namespace:
@@ -43,7 +48,7 @@ def check_args(args: argparse.Namespace) -> None:
     """
     if args.interval < 0:
         raise ValueError("The value of `interval` must be positive.")
-    if args.interval < args.time_threshold:
+    if args.interval > args.time_threshold:
         raise ValueError(
             "The value of `time_threshold` must be greater than the value of `interval`."
         )
@@ -55,8 +60,13 @@ def main(args: argparse.Namespace) -> None:
     """
     Main function
     """
-    check_args(args)
+    logger.info("Server Start")
+    try:
+        check_args(args)
+    except ValueError as error:
+        logger.error(error)
+        sys.exit(ExitStatusEnum.PARAMETER_VALUE_ERROR.value)
 
 
 if __name__ == "__main__":
-    main(get_args)
+    main(get_args())
