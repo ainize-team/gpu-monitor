@@ -1,72 +1,71 @@
 import requests
-from typing import Dict, List
 
-COLOR: Dict[str, str] = {
-    "success": "#28a745",
-    "warning": "#ffc107",
-    "danger": "#dc3545",
-}
+from loguru import logger
+
+from constants import SlackMesaageColorEnum
 
 
-def _make_message(
-    status: str, server_name: str, first_occurrence_time: str, utilization: float
-) -> List:
+def _make_message(status: str, server_name: str, utilization: float) -> dict:
+    """
+    Send slack message according to the state of the gpu utilization
+
+    Args:
+        status (str): status of gpu utilization
+        server_name (str): name that identifies the server
+        utilization (float): gpu utilization
+
+    Returns:
+        dict: value for sending slack message
+    """
     if status == "success":
-        text = ":thumbsup: GPU utilization has been restored to normal. :thumbsup:"
+        text = ":thumbsup: GPU utilization is normal. :thumbsup:"
         fields = []
-    else:
-        if status == "warning":
-            text = "*:question: GPU utilization is low. :question:*"
-        else:
-            text = "*:exclamation: GPU utilization has been low for a long time. :exclamation:*"
+        color = SlackMesaageColorEnum.SUCCESS_MESSAGE_COLOR.value
+    if status == "error":
+        text = "*:exclamation: GPU utilization is abnormal. :exclamation:*"
         fields = [
-            {"value": f"First Occurrence Time: {first_occurrence_time}", "short": False},
             {"value": f"GPU Utilization: {utilization}", "short": False},
         ]
-    return [{"color": COLOR[status], "author_name": server_name, "text": text, "fields": fields}]
+        color = SlackMesaageColorEnum.ERROR_MESSAGE_COLOR.value
+
+    return {
+        "color": color,
+        "author_name": server_name,
+        "text": text,
+        "fields": fields,
+    }
 
 
 class SlackWebhookBot:
+    """
+    Send slack message
+    """
+
     def __init__(self, webhook_url: str):
         self.webhook_url = webhook_url
 
-    def send_message(
-        self, status: str, server_name: str, first_occurrence_time: str, utilization: float
-    ) -> bool:
-        try:
-            response = requests.post(
-                url=self.webhook_url,
-                headers={"Content-Type": "application/json; charset=utf-8"},
-                json={
-                    "attachments": _make_message(
-                        status, server_name, first_occurrence_time, utilization
-                    )
-                },
-            )
-            if response.status_code == 200:
-                return {"error": False, "text": response.text}
-            return {"error": True, "text": response.text}
-        except Exception as e:
-            return {"error": True, "text": f"Unexpected error occurred: {e}"}
+    def send_message(self, status: str, server_name: str, utilization: float) -> dict:
+        """
+        Send slack message
 
-    def send_error(self, server_name, message):
+        Args:
+            status (str): status of gpu utilization
+            server_name (str): name that identifies the server
+            utilization (float):gpu utilization
+
+        Returns:
+            dict: status info of request
+        """
         try:
             response = requests.post(
                 url=self.webhook_url,
                 headers={"Content-Type": "application/json; charset=utf-8"},
-                json={
-                    "attachments": [
-                        {
-                            "color": COLOR["danger"],
-                            "author_name": server_name,
-                            "text": "Unexpected Error Occurs",
-                            "fields": [{"value": f"{message}", "short": False}],
-                        }
-                    ]
-                },
+                json={"attachments": _make_message(status, server_name, utilization)},
             )
             if response.status_code == 200:
-                return {"error": False, "text": response.text}
-            return {"error": True, "text": response.text}
-        except Exception as e:
-            return {"error": True, "text": f"Unexpected error occurred: {e}"}
+                return {"is_error": False, "text": response.text}
+            logger.error("Error occured while sending slack message : ", response)
+            return {"is_error": True, "text": response.text}
+        except Exception as error:
+            logger.error("Unexpected error occurred while sending slack message : ", error)
+            return {"is_error": True, "text": f"Unexpected error occurred: {error}"}

@@ -4,8 +4,9 @@ import argparse
 from loguru import logger
 from apscheduler.schedulers.blocking import BlockingScheduler
 
-from utils.gpu import get_gpus, get_average_gpu_utilization
+from utils.slack import SlackWebhookBot
 from constants import ExitStatusEnum
+from utils.gpu import get_gpus, get_average_gpu_utilization
 
 
 def get_args() -> argparse.Namespace:
@@ -58,7 +59,7 @@ def check_args(args: argparse.Namespace) -> None:
         raise ValueError("The value of `utilization_threshold` must be between 0 and 100.")
 
 
-def _gpu_check_job(utilization_threshold: int, time_threshold: int) -> None:
+def _gpu_check_job(utilization_threshold: int, server_name: str, slack_bot) -> None:
     """
     Job to get gpu information every interval
 
@@ -69,9 +70,10 @@ def _gpu_check_job(utilization_threshold: int, time_threshold: int) -> None:
     gpu_information_list = get_gpus()
     average_gpu_utilization = get_average_gpu_utilization(gpu_information_list)
     if average_gpu_utilization <= utilization_threshold:
-        logger.error("gpu utilization is low")
+        slack_bot.send_message("success", server_name, average_gpu_utilization)
+
     else:
-        logger.info("gpu utilization is good")
+        slack_bot.send_message("error", server_name, average_gpu_utilization)
 
 
 def main(args: argparse.Namespace) -> None:
@@ -90,11 +92,12 @@ def main(args: argparse.Namespace) -> None:
         logger.error(error)
         sys.exit(ExitStatusEnum.NVIDIA_SMI_NOT_FOUND_ERROR.value)
     logger.info("Scheduler Start")
+    slack_bot = SlackWebhookBot(args.webhook_url)
     scheduler = BlockingScheduler()
     scheduler.add_job(
         _gpu_check_job,
         "interval",
-        args=[args.utilization_threshold, args.time_threshold],
+        args=[args.utilization_threshold, args.server_name, slack_bot],
         seconds=args.interval,
     )
     scheduler.start()
