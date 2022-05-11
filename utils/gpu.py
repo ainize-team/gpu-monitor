@@ -8,7 +8,7 @@ from subprocess import Popen, PIPE
 # pylint: disable=line-too-long, too-many-instance-attributes
 class GPUInformation:
     """
-    Information About GPU
+    Information About gpu
     """
 
     index: int = field(metadata={"help": "Zero based index of the GPU. Can change at each boot."})
@@ -122,10 +122,10 @@ def get_average_gpu_utilization(gpu_information_list: List[GPUInformation]) -> f
     Get the average of the GPU utilization
 
     Args:
-        gpu_information_list (List[GPUInformation]): gpu information
+        gpu_information_list (List[GPUInformation]): GPU information
 
     Returns:
-        float: average of gpu utilization
+        float: average of GPU utilization
 
     Example:
         >>> get_average_gpu_utilization(

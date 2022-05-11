@@ -8,12 +8,12 @@ from constants import SlackMesaageColorEnum, SlackMessageStatusEnum
 
 def _make_message(status: str, server_name: str, utilization: float) -> List:
     """
-    Send slack message according to the state of the gpu utilization
+    Send slack message according to the state of the GPU utilization
 
     Args:
-        status (str): status of gpu utilization
+        status (str): status of GPU utilization
         server_name (str): name that identifies the server
-        utilization (float): gpu utilization
+        utilization (float): GPU utilization
 
     Returns:
         list: value for sending slack message
@@ -58,9 +58,9 @@ class SlackWebhookBot:
         Send slack message
 
         Args:
-            status (str): status of gpu utilization
+            status (str): status of GPU utilization
             server_name (str): name that identifies the server
-            utilization (float): gpu utilization
+            utilization (float): GPU utilization
 
         Returns:
             dict: status info of request

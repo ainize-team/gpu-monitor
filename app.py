@@ -30,7 +30,7 @@ def get_args() -> argparse.Namespace:
         "--interval",
         type=int,
         default=60,
-        help="interval to check gpu usage (second)",
+        help="interval to check GPU usage (second)",
     )
     parser.add_argument(
         "--utilization_threshold", type=int, default=40, help="minimum GPU utilization"
@@ -61,7 +61,7 @@ def check_args(args: argparse.Namespace) -> None:
 
 def _gpu_check_job(utilization_threshold: int, server_name: str, slack_bot) -> None:
     """
-    Job to get gpu information every interval
+    Job to get GPU information every interval
 
     Args:
         utilization_threshold (int): minimum GPU utilization
