@@ -63,6 +63,25 @@ def get_gpus() -> List[GPUInformation]:
         ]
     """
 
+    def string_to_int(value: str) -> int:
+        """
+        Convert string value to Integer value
+        If string value is not intger, return -1
+        Args:
+            value (str): string value
+        Returns:
+            int: Integer Value
+        Examples:
+            >>> string_to_int("32")
+            >>> 32
+            >>> string_to_int("N/A")
+            >>> -1
+        """
+        try:
+            return int(value)
+        except ValueError:
+            return -1
+
     with Popen(
         [
             "nvidia-smi",
@@ -78,16 +97,16 @@ def get_gpus() -> List[GPUInformation]:
             gpu_information_list = [each.strip() for each in line.split(",")]
             ret.append(
                 GPUInformation(
-                    index=int(gpu_information_list[0]),
+                    index=string_to_int(gpu_information_list[0]),
                     gpu_name=gpu_information_list[1],
                     gpu_bus_id=gpu_information_list[2],
-                    gpu_temperature=int(gpu_information_list[3]),
-                    gpu_utilization=int(gpu_information_list[4]),
-                    memory_temperature=int(gpu_information_list[5]),
-                    memory_utilization=int(gpu_information_list[6]),
-                    total_memory=int(gpu_information_list[7]),
-                    free_memory=int(gpu_information_list[8]),
-                    used_memory=int(gpu_information_list[9]),
+                    gpu_temperature=string_to_int(gpu_information_list[3]),
+                    gpu_utilization=string_to_int(gpu_information_list[4]),
+                    memory_temperature=string_to_int(gpu_information_list[5]),
+                    memory_utilization=string_to_int(gpu_information_list[6]),
+                    total_memory=string_to_int(gpu_information_list[7]),
+                    free_memory=string_to_int(gpu_information_list[8]),
+                    used_memory=string_to_int(gpu_information_list[9]),
                 )
             )
         return ret
