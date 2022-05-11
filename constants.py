@@ -10,9 +10,18 @@ class ExitStatusEnum(Enum):
     NVIDIA_SMI_NOT_FOUND_ERROR = 2
 
 
+class SlackMessageStatusEnum(Enum):
+    """
+    Values for the slack message status.
+    """
+
+    SUCCESS_MESSAGE = "success"
+    ERROR_MESSAGE = "error"
+
+
 class SlackMesaageColorEnum(Enum):
     """
-    Slack message color value according to status
+    Slack message color value according to status.
     """
 
     SUCCESS_MESSAGE_COLOR = "#28a745"

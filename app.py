@@ -5,8 +5,8 @@ from loguru import logger
 from apscheduler.schedulers.blocking import BlockingScheduler
 
 from utils.slack import SlackWebhookBot
-from constants import ExitStatusEnum
 from utils.gpu import get_gpus, get_average_gpu_utilization
+from constants import ExitStatusEnum, SlackMessageStatusEnum
 
 
 def get_args() -> argparse.Namespace:
@@ -70,10 +70,14 @@ def _gpu_check_job(utilization_threshold: int, server_name: str, slack_bot) -> N
     gpu_information_list = get_gpus()
     average_gpu_utilization = get_average_gpu_utilization(gpu_information_list)
     if average_gpu_utilization <= utilization_threshold:
-        slack_bot.send_message("error", server_name, average_gpu_utilization)
+        slack_bot.send_message(
+            SlackMessageStatusEnum.ERROR_MESSAGE.value, server_name, average_gpu_utilization
+        )
 
     else:
-        slack_bot.send_message("success", server_name, average_gpu_utilization)
+        slack_bot.send_message(
+            SlackMessageStatusEnum.SUCCESS_MESSAGE.value, server_name, average_gpu_utilization
+        )
 
 
 def main(args: argparse.Namespace) -> None:

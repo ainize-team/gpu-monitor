@@ -3,7 +3,7 @@ import requests
 
 from loguru import logger
 
-from constants import SlackMesaageColorEnum
+from constants import SlackMesaageColorEnum, SlackMessageStatusEnum
 
 
 def _make_message(status: str, server_name: str, utilization: float) -> List:
@@ -18,7 +18,7 @@ def _make_message(status: str, server_name: str, utilization: float) -> List:
     Returns:
         list: value for sending slack message
     """
-    if status == "success":
+    if status == SlackMessageStatusEnum.SUCCESS_MESSAGE.value:
         fields = [
             {
                 "title": "GPU utilization is normal",
@@ -27,7 +27,7 @@ def _make_message(status: str, server_name: str, utilization: float) -> List:
             },
         ]
         color = SlackMesaageColorEnum.SUCCESS_MESSAGE_COLOR.value
-    if status == "error":
+    if status == SlackMessageStatusEnum.ERROR_MESSAGE.value:
         fields = [
             {
                 "title": "GPU utilization is abnormal",
