@@ -43,8 +43,10 @@ def get_gpus() -> List[GPUInformation]:
     Using this function, you can get the information of GPUs.
     For detailed explanation, see the site below or `nvidia-smi --help-query-gpu`
     https://nvidia.custhelp.com/app/answers/detail/a_id/3751/~/useful-nvidia-smi-queries
+
     Returns:
         List[GPUInformation]: List of Information of each GPU
+
     Example:
         >>> get_gpus()
         >>> [
@@ -67,10 +69,13 @@ def get_gpus() -> List[GPUInformation]:
         """
         Convert string value to Integer value
         If string value is not intger, return -1
+
         Args:
             value (str): string value
+
         Returns:
             int: Integer Value
+
         Examples:
             >>> string_to_int("32")
             >>> 32

@@ -73,7 +73,6 @@ def _gpu_check_job(utilization_threshold: int, server_name: str, slack_bot) -> N
         slack_bot.send_message(
             SlackMessageStatusEnum.ERROR_MESSAGE.value, server_name, average_gpu_utilization
         )
-
     else:
         slack_bot.send_message(
             SlackMessageStatusEnum.SUCCESS_MESSAGE.value, server_name, average_gpu_utilization

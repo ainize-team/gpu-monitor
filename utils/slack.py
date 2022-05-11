@@ -60,7 +60,7 @@ class SlackWebhookBot:
         Args:
             status (str): status of gpu utilization
             server_name (str): name that identifies the server
-            utilization (float):gpu utilization
+            utilization (float): gpu utilization
 
         Returns:
             dict: status info of request
