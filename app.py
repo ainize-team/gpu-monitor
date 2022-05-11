@@ -97,6 +97,7 @@ def main(args: argparse.Namespace) -> None:
         args=[args.utilization_threshold, args.time_threshold],
         seconds=args.interval,
     )
+    scheduler.start()
 
 
 if __name__ == "__main__":
