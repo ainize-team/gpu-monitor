@@ -49,16 +49,16 @@ def get_gpus() -> List[GPUInformation]:
         get_gpus()
         [
             GPUInformation(
-                index='0',
+                index=0,
                 gpu_name='NVIDIA TITAN V',
                 gpu_bus_id='00000000:06:00.0',
-                gpu_temperature='45',
-                gpu_utilization='6',
-                memory_temperature='41',
-                memory_utilization='1',
-                total_memory='12288',
-                free_memory='11215',
-                used_memory='848'
+                gpu_temperature=46,
+                gpu_utilization=0,
+                memory_temperature=41,
+                memory_utilization=0,
+                total_memory=12288,
+                free_memory=11180,
+                used_memory=883
             )
         ]
     """
@@ -78,16 +78,16 @@ def get_gpus() -> List[GPUInformation]:
             gpu_information_list = [each.strip() for each in line.split(",")]
             ret.append(
                 GPUInformation(
-                    index=gpu_information_list[0],
+                    index=int(gpu_information_list[0]),
                     gpu_name=gpu_information_list[1],
                     gpu_bus_id=gpu_information_list[2],
-                    gpu_temperature=gpu_information_list[3],
-                    gpu_utilization=gpu_information_list[4],
-                    memory_temperature=gpu_information_list[5],
-                    memory_utilization=gpu_information_list[6],
-                    total_memory=gpu_information_list[7],
-                    free_memory=gpu_information_list[8],
-                    used_memory=gpu_information_list[9],
+                    gpu_temperature=int(gpu_information_list[3]),
+                    gpu_utilization=int(gpu_information_list[4]),
+                    memory_temperature=int(gpu_information_list[5]),
+                    memory_utilization=int(gpu_information_list[6]),
+                    total_memory=int(gpu_information_list[7]),
+                    free_memory=int(gpu_information_list[8]),
+                    used_memory=int(gpu_information_list[9]),
                 )
             )
         return ret
