@@ -2,7 +2,9 @@ import sys
 import argparse
 
 from loguru import logger
+from apscheduler.schedulers.blocking import BlockingScheduler
 
+from utils.gpu import get_gpus, get_average_gpu_utilization
 from constants import ExitStatusEnum
 
 
@@ -56,6 +58,22 @@ def check_args(args: argparse.Namespace) -> None:
         raise ValueError("The value of `utilization_threshold` must be between 0 and 100.")
 
 
+def _gpu_check_job(utilization_threshold: int, time_threshold: int) -> None:
+    """
+    Job to get gpu information every interval
+
+    Args:
+        utilization_threshold (int): minimum GPU utilization
+        time_threshold (int): time to start sending danger alarms
+    """
+    gpu_information_list = get_gpus()
+    average_gpu_utilization = get_average_gpu_utilization(gpu_information_list)
+    if average_gpu_utilization <= utilization_threshold:
+        logger.error("gpu utilization is low")
+    else:
+        logger.info("gpu utilization is good")
+
+
 def main(args: argparse.Namespace) -> None:
     """
     Main function
@@ -66,6 +84,19 @@ def main(args: argparse.Namespace) -> None:
     except ValueError as error:
         logger.error(error)
         sys.exit(ExitStatusEnum.PARAMETER_VALUE_ERROR.value)
+    try:
+        get_gpus()
+    except FileNotFoundError as error:
+        logger.error(error)
+        sys.exit(ExitStatusEnum.NVIDIA_SMI_NOT_FOUND_ERROR.value)
+    logger.info("Scheduler Start")
+    scheduler = BlockingScheduler()
+    scheduler.add_job(
+        _gpu_check_job,
+        "interval",
+        args=[args.utilization_threshold, args.time_threshold],
+        seconds=args.interval,
+    )
 
 
 if __name__ == "__main__":

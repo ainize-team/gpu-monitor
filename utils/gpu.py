@@ -46,8 +46,8 @@ def get_gpus() -> List[GPUInformation]:
     Returns:
         List[GPUInformation]: List of Information of each GPU
     Example:
-        get_gpus()
-        [
+        >>> get_gpus()
+        >>> [
             GPUInformation(
                 index=0,
                 gpu_name='NVIDIA TITAN V',
@@ -91,3 +91,38 @@ def get_gpus() -> List[GPUInformation]:
                 )
             )
         return ret
+
+
+def get_average_gpu_utilization(gpu_information_list: List[GPUInformation]) -> float:
+    """
+    Get the average of the GPU utilization
+
+    Args:
+        gpu_information_list (List[GPUInformation]): gpu information
+
+    Returns:
+        float: average of gpu utilization
+
+    Example:
+        >>> get_average_gpu_utilization(
+            [
+                GPUInformation(
+                    index=0,
+                    gpu_name='NVIDIA TITAN V',
+                    gpu_bus_id='00000000:06:00.0',
+                    gpu_temperature=46,
+                    gpu_utilization=43,
+                    memory_temperature=41,
+                    memory_utilization=0,
+                    total_memory=12288,
+                    free_memory=11180,
+                    used_memory=883
+                )
+            ]
+        )
+        >>> 43.0
+    """
+    total_gpu_utilization = sum([gpu_info.gpu_utilization for gpu_info in gpu_information_list])
+    average_gpu_utilization = total_gpu_utilization / len(gpu_information_list)
+
+    return average_gpu_utilization
