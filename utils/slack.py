@@ -1,12 +1,12 @@
-from typing import List
+import json
 import requests
 
 from loguru import logger
 
-from constants import SlackMesaageColorEnum, SlackMessageStatusEnum
+from constants import SlackMesaageColorEnum, SlackMessageTypeEnum, SlackMesaageIconEnum
 
 
-def _make_message(status: str, server_name: str, utilization: float) -> List:
+def _make_slack_message(slack_message_type: str, server_name: str, utilization: float) -> str:
     """
     Send slack message according to the state of the GPU utilization
 
@@ -16,9 +16,9 @@ def _make_message(status: str, server_name: str, utilization: float) -> List:
         utilization (float): GPU utilization
 
     Returns:
-        list: value for sending slack message
+        str: value for sending slack message(json format)
     """
-    if status == SlackMessageStatusEnum.SUCCESS_MESSAGE.value:
+    if slack_message_type == SlackMessageTypeEnum.SUCCESS_MESSAGE.value:
         fields = [
             {
                 "title": "GPU utilization is normal",
@@ -27,7 +27,8 @@ def _make_message(status: str, server_name: str, utilization: float) -> List:
             },
         ]
         color = SlackMesaageColorEnum.SUCCESS_MESSAGE_COLOR.value
-    if status == SlackMessageStatusEnum.ERROR_MESSAGE.value:
+        icon = SlackMesaageIconEnum.SUCCESS_MESSAGE_ICON.value
+    elif slack_message_type == SlackMessageTypeEnum.ERROR_MESSAGE.value:
         fields = [
             {
                 "title": "GPU utilization is abnormal",
@@ -36,13 +37,29 @@ def _make_message(status: str, server_name: str, utilization: float) -> List:
             },
         ]
         color = SlackMesaageColorEnum.ERROR_MESSAGE_COLOR.value
-
-    return [
+        icon = SlackMesaageIconEnum.ERROR_MESSAGE_ICON.value
+    elif slack_message_type == SlackMessageTypeEnum.INFO_MESSAGE.value:
+        fields = [
+            {
+                "title": "GPU monitoring start",
+                "value": f"GPU Server: {server_name}\nGPU Utilization: {utilization}",
+                "short": False,
+            },
+        ]
+        icon = SlackMesaageIconEnum.INFO_MESSAGE_ICON.value
+    else:
+        raise ValueError("Unexpected slack message type : ", slack_message_type)
+    return json.dumps(
         {
-            "color": color,
-            "fields": fields,
+            "attachments": [
+                {
+                    "color": color,
+                    "fields": fields,
+                }
+            ],
+            "icon_emoji": icon,
         }
-    ]
+    )
 
 
 class SlackWebhookBot:
@@ -69,7 +86,7 @@ class SlackWebhookBot:
             response = requests.post(
                 url=self.webhook_url,
                 headers={"Content-Type": "application/json; charset=utf-8"},
-                json={"attachments": _make_message(status, server_name, utilization)},
+                json=_make_slack_message(status, server_name, utilization),
             )
             if response.status_code == 200:
                 return {"is_error": False, "text": response.text}
