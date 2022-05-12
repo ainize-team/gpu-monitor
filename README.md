@@ -29,13 +29,23 @@ pip install -r requirements.txt
 4. run gpu monitoring
 
 ```bash
-python app.py --server_name ${serverName} --webhook_url ${webhook_url} --interval ${interval} --utilization_threshold ${utilization_threshold} --time_threshold ${time_threshold}
+python app.py \
+--server_name ${serverName} \
+--webhook_url ${webhook_url} \
+--interval ${interval} \
+--utilization_threshold ${utilization_threshold} \
+--time_threshold ${time_threshold}
 ```
 
-## Example
+### Example
 
 ```bash
-python app.py --server_name a100 --webhook_url https://hooks.slack.com/services... --interval 600 --utilization_threshold 80 --time_threshold 1200
+python app.py \
+--server_name a100 \
+--webhook_url https://hooks.slack.com/services/... \
+--interval 600 \
+--utilization_threshold 80 \
+--time_threshold 1200
 ```
 
 ## License
