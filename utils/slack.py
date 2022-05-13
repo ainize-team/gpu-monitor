@@ -4,7 +4,7 @@ from typing import Dict
 
 from loguru import logger
 
-from constants import SlackMesaageColorEnum, SlackMessageTypeEnum, SlackMesaageIconEnum
+from constants import SlackMesaageColorEnum, SlackMessageTypeEnum
 
 
 def _make_slack_message(slack_message_type: str, server_name: str, utilization: float) -> str:
@@ -28,7 +28,6 @@ def _make_slack_message(slack_message_type: str, server_name: str, utilization: 
             },
         ]
         color = SlackMesaageColorEnum.SUCCESS_MESSAGE_COLOR.value
-        icon = SlackMesaageIconEnum.SUCCESS_MESSAGE_ICON.value
     elif slack_message_type == SlackMessageTypeEnum.ERROR_MESSAGE.value:
         fields = [
             {
@@ -38,7 +37,6 @@ def _make_slack_message(slack_message_type: str, server_name: str, utilization: 
             },
         ]
         color = SlackMesaageColorEnum.ERROR_MESSAGE_COLOR.value
-        icon = SlackMesaageIconEnum.ERROR_MESSAGE_ICON.value
     elif slack_message_type == SlackMessageTypeEnum.INFO_MESSAGE.value:
         fields = [
             {
@@ -47,7 +45,6 @@ def _make_slack_message(slack_message_type: str, server_name: str, utilization: 
                 "short": False,
             },
         ]
-        icon = SlackMesaageIconEnum.INFO_MESSAGE_ICON.value
     else:
         raise ValueError("Unexpected slack message type : ", slack_message_type)
     return json.dumps(
@@ -58,7 +55,6 @@ def _make_slack_message(slack_message_type: str, server_name: str, utilization: 
                     "fields": fields,
                 }
             ],
-            "icon_emoji": icon,
         }
     )
 
@@ -87,7 +83,7 @@ class SlackWebhookBot:
             response = requests.post(
                 url=self.webhook_url,
                 headers={"Content-Type": "application/json; charset=utf-8"},
-                json=_make_slack_message(status, server_name, utilization),
+                data=_make_slack_message(status, server_name, utilization),
             )
             if response.status_code == 200:
                 return {"is_error": False, "text": response.text}
