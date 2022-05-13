@@ -88,8 +88,8 @@ class SlackWebhookBot:
             )
             if response.status_code == 200:
                 return {"is_error": False, "text": response.text}
-            logger.error("Error occured while sending slack message : ", response.text)
+            logger.error(f"Error occured while sending slack message : {response.text}")
             return {"is_error": True, "text": response.text}
         except Exception as error:
-            logger.error("Unexpected error occurred while sending slack message : ", error)
+            logger.error(f"Unexpected error occurred while sending slack message : {error}")
             return {"is_error": True, "text": f"Unexpected error occurred: {error}"}
