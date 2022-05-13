@@ -43,7 +43,7 @@ def _make_slack_message(slack_message_type: str, server_name: str, utilization: 
         fields = [
             {
                 "title": "GPU monitoring start",
-                "value": f"GPU Server: {server_name}\nGPU Utilization: {utilization}",
+                "value": f"GPU Server: {server_name}",
                 "short": False,
             },
         ]
@@ -71,7 +71,7 @@ class SlackWebhookBot:
     def __init__(self, webhook_url: str):
         self.webhook_url = webhook_url
 
-    def send_message(self, status: str, server_name: str, utilization: float) -> Dict:
+    def send_message(self, status: str, server_name: str, utilization: float=-1) -> Dict:
         """
         Send slack message
 

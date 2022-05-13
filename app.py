@@ -101,7 +101,7 @@ def main(args: argparse.Namespace) -> None:
         logger.error(error)
         sys.exit(ExitStatusEnum.NVIDIA_SMI_NOT_FOUND_ERROR.value)
     slack_bot = SlackWebhookBot(args.webhook_url)
-    slack_bot.send_message(SlackMessageTypeEnum.INFO_MESSAGE.value, args.server_name, args.average_gpu_utilization)
+    slack_bot.send_message(SlackMessageTypeEnum.INFO_MESSAGE.value, args.server_name)
     logger.info("Scheduler Start")
     scheduler = BlockingScheduler()
     scheduler.add_job(
