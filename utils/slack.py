@@ -1,5 +1,6 @@
 import json
 import requests
+from typing import Dict
 
 from loguru import logger
 
@@ -70,7 +71,7 @@ class SlackWebhookBot:
     def __init__(self, webhook_url: str):
         self.webhook_url = webhook_url
 
-    def send_message(self, status: str, server_name: str, utilization: float) -> dict:
+    def send_message(self, status: str, server_name: str, utilization: float) -> Dict:
         """
         Send slack message
 
