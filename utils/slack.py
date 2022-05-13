@@ -45,6 +45,7 @@ def _make_slack_message(slack_message_type: str, server_name: str, utilization: 
                 "short": False,
             },
         ]
+        color = SlackMesaageColorEnum.INFO_MESSAGE_COLOR.value
     else:
         raise ValueError("Unexpected slack message type : ", slack_message_type)
     return json.dumps(
