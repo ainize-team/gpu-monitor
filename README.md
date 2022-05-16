@@ -13,39 +13,16 @@ git clone https://github.com/ainize-team/gpu-monitor.git
 cd gpu-monitor
 ```
 
-2. set virtual environment
+2. build docker file
 
 ```bash
-python -m venv .venv
-. .venv/bin/activate
+docker build -t gpu-monitor .
 ```
 
-3. install packages
+3. run gpu monitoring
 
 ```bash
-pip install -r requirements.txt
-```
-
-4. run gpu monitoring
-
-```bash
-python app.py \
---server_name ${serverName} \
---webhook_url ${webhook_url} \
---interval ${interval} \
---utilization_threshold ${utilization_threshold} \
---time_threshold ${time_threshold}
-```
-
-### Example
-
-```bash
-python app.py \
---server_name a100 \
---webhook_url https://hooks.slack.com/services/... \
---interval 600 \
---utilization_threshold 80 \
---time_threshold 1200
+docker run -d --gpus=all -e SERVER_NAME="YOUR_SERVER_NAME" -e WEBHOOK_URL="YOURE_WEBHOOK_URL" -e INTERVAL=60 -e UTILIZATION_THRESHOLD=40  -e TIME_THRESHOLD=3600 gpu-monitor
 ```
 
 ## License
@@ -57,4 +34,4 @@ python app.py \
 - [x] Function to get gpu information
 - [x] Function to send the current server status to the slack bot
 - [ ] Function that writes the current server state to a google spreadsheet.
-- [ ] Easy to use using Dockerfile
+- [x] Easy to use using Dockerfile
