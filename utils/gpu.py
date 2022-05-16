@@ -8,7 +8,7 @@ from subprocess import Popen, PIPE
 # pylint: disable=line-too-long, too-many-instance-attributes
 class GPUInformation:
     """
-    Information About GPU
+    Information About gpu
     """
 
     index: int = field(metadata={"help": "Zero based index of the GPU. Can change at each boot."})
@@ -43,11 +43,13 @@ def get_gpus() -> List[GPUInformation]:
     Using this function, you can get the information of GPUs.
     For detailed explanation, see the site below or `nvidia-smi --help-query-gpu`
     https://nvidia.custhelp.com/app/answers/detail/a_id/3751/~/useful-nvidia-smi-queries
+
     Returns:
         List[GPUInformation]: List of Information of each GPU
+
     Example:
-        get_gpus()
-        [
+        >>> get_gpus()
+        >>> [
             GPUInformation(
                 index=0,
                 gpu_name='NVIDIA TITAN V',
@@ -62,6 +64,28 @@ def get_gpus() -> List[GPUInformation]:
             )
         ]
     """
+
+    def string_to_int(value: str) -> int:
+        """
+        Convert string value to Integer value
+        If string value is not intger, return -1
+
+        Args:
+            value (str): string value
+
+        Returns:
+            int: Integer Value
+
+        Examples:
+            >>> string_to_int("32")
+            >>> 32
+            >>> string_to_int("N/A")
+            >>> -1
+        """
+        try:
+            return int(value)
+        except ValueError:
+            return -1
 
     with Popen(
         [
@@ -78,16 +102,51 @@ def get_gpus() -> List[GPUInformation]:
             gpu_information_list = [each.strip() for each in line.split(",")]
             ret.append(
                 GPUInformation(
-                    index=int(gpu_information_list[0]),
+                    index=string_to_int(gpu_information_list[0]),
                     gpu_name=gpu_information_list[1],
                     gpu_bus_id=gpu_information_list[2],
-                    gpu_temperature=int(gpu_information_list[3]),
-                    gpu_utilization=int(gpu_information_list[4]),
-                    memory_temperature=int(gpu_information_list[5]),
-                    memory_utilization=int(gpu_information_list[6]),
-                    total_memory=int(gpu_information_list[7]),
-                    free_memory=int(gpu_information_list[8]),
-                    used_memory=int(gpu_information_list[9]),
+                    gpu_temperature=string_to_int(gpu_information_list[3]),
+                    gpu_utilization=string_to_int(gpu_information_list[4]),
+                    memory_temperature=string_to_int(gpu_information_list[5]),
+                    memory_utilization=string_to_int(gpu_information_list[6]),
+                    total_memory=string_to_int(gpu_information_list[7]),
+                    free_memory=string_to_int(gpu_information_list[8]),
+                    used_memory=string_to_int(gpu_information_list[9]),
                 )
             )
         return ret
+
+
+def get_average_gpu_utilization(gpu_information_list: List[GPUInformation]) -> float:
+    """
+    Get the average of the GPU utilization
+
+    Args:
+        gpu_information_list (List[GPUInformation]): GPU information
+
+    Returns:
+        float: average of GPU utilization
+
+    Example:
+        >>> get_average_gpu_utilization(
+            [
+                GPUInformation(
+                    index=0,
+                    gpu_name='NVIDIA TITAN V',
+                    gpu_bus_id='00000000:06:00.0',
+                    gpu_temperature=46,
+                    gpu_utilization=43,
+                    memory_temperature=41,
+                    memory_utilization=0,
+                    total_memory=12288,
+                    free_memory=11180,
+                    used_memory=883
+                )
+            ]
+        )
+        >>> 43.0
+    """
+    total_gpu_utilization = sum([gpu_info.gpu_utilization for gpu_info in gpu_information_list])
+    average_gpu_utilization = total_gpu_utilization / len(gpu_information_list)
+
+    return average_gpu_utilization
